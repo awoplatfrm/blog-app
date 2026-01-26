@@ -35,20 +35,19 @@ document.getElementById("sidebar-login-btn").addEventListener('click', () => {
     return false
 
 });
-// REMOVE the old JWT token and fetch code entirely
-// Add this clean version:
 
+const WORDPRESS_API = "https://blog-app.infinityfree.me/index.php/wp-json/wp/v2";
 document.addEventListener("DOMContentLoaded", async () => {
 
+    const postGrid = document.querySelector('.post-grid');
     try {
-        const response = await fetch("https://blog-app.infinityfree.me/?rest_route=/wp/v2/posts");
+        const response = await fetch(`${WORDPRESS_API}/posts`);
 
         if (!response.ok) {
             throw new Error(`Failed to load posts: ${response.status}`);
         }
 
         const posts = await response.json();
-        const postGrid = document.querySelector('.post-grid');
 
         if (posts.length === 0) {
             postGrid.innerHTML = '<p>No posts yet. <a href="pages/createPost.html">Create first post</a></p>';
@@ -71,7 +70,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     } catch (error) {
         console.error('Error:', error);
         document.querySelector('.post-grid').innerHTML =
-            '<p>Could not load posts. Please check connection.</p>';
+            '<p>Sorry, you are not allowed to access REST API. error_reason... With the free plan, only WordPress default endpoint can be authenticated</p>';
     }
 });
 
@@ -79,44 +78,6 @@ document.getElementById("sidebar-home-btn").addEventListener('click', () => {
     window.location.href = "/";
     return false
 });
-document.addEventListener("DOMContentLoaded", async () => {
-
-    await fetch("https://blog-app.infinityfree.me/?rest_route=/wp/v2/posts", {
-        method: "GET",
-        headers: {
-            "content-type": "application/json",
-        }
-    }).then(async (response) => {
-        if (!response.ok) {
-            //handle error
-            throw new Error(`HTTP Error! with status code${response.status}`)
-
-        }
-        const posts = await response.json();
-        const postGrid = document.querySelector('.post-grid');
-        if (posts.length === 0) {
-            postGrid.innerHTML = '<p>No posts available. <a href="../pages/createPost.html">Create a new post</a></p>';
-        } else {
-            posts.forEach(post => {
-                // console.log("post id", post.id)
-                const postElement = document.createElement('div');
-                postElement.className = 'post-card';
-                postElement.innerHTML = `
-                    <h2>${post.title?.rendered || 'Untitled'}</h2>
-                    <p>${post.content?.rendered || 'No content'}</p>
-                    <div class="post-actions">
-                    <button class="edit-btn" data-id="${post.id}">Edit</button>
-                    <button class="delete-btn" data-id="${post.id}">Delete</button>
-                    </div>
-                `;
-                postGrid.appendChild(postElement);
-            });
-        }
-
-    });
-
-});
-
 // edit and delete function
 document.addEventListener('click', (e) => {
     if (e.target.classList.contains('edit-btn')) {
@@ -128,11 +89,9 @@ document.addEventListener('click', (e) => {
     if (e.target.classList.contains('delete-btn')) {
         const postId = e.target.dataset.id;
         if (confirm('do you want to delete this post?')) {
-            fetch(`http://127.0.0.1/myproject2/wp-json/wp/v2/posts/${postId}`, {
+            fetch(`${WORDPRESS_API}/${postId}`, {
                 method: 'DELETE',
-                mode: 'cors',
                 headers: {
-                    "Authorization": `Bearer ${jwt_token}`,
                     "content-type": "application/json",
                 }
             }).then(response => {
