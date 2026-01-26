@@ -52,7 +52,13 @@
                 <button id="next-btn">Next</button>
             </div>
         </div>
-        <script src="cordova.js"></script>
+
+        <script>
+            // Only load cordova.js in Cordova environment
+            if (window.cordova || window.location.protocol === 'file:') {
+                document.write('<script src="cordova.js"><\/script>');
+            }
+        </script>
         <script src="./js/index.js"></script>
 </body>
 

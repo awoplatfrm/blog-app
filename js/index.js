@@ -41,36 +41,34 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const postGrid = document.querySelector('.post-grid');
     try {
+        console.log("Fetching from:", `${WORDPRESS_API}/posts`);
+
         const response = await fetch(`${WORDPRESS_API}/posts`);
 
+        console.log("Response status:", response.status);
+        console.log("Response headers:", Object.fromEntries(response.headers.entries()));
+
+        // Check if we got HTML instead of JSON
+        const contentType = response.headers.get('content-type') || '';
+        if (contentType.includes('text/html')) {
+            const html = await response.text();
+            console.error("Got HTML error page:", html.substring(0, 500));
+            throw new Error("WordPress returned HTML instead of JSON");
+        }
+
         if (!response.ok) {
-            throw new Error(`Failed to load posts: ${response.status}`);
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
 
         const posts = await response.json();
+        console.log("Posts received:", posts.length, "posts");
 
-        if (posts.length === 0) {
-            postGrid.innerHTML = '<p>No posts yet. <a href="pages/createPost.html">Create first post</a></p>';
-        } else {
-            posts.forEach(post => {
-                const postElement = document.createElement('div');
-                postElement.className = 'post-card';
-                postElement.innerHTML = `
-                    <h2>${post.title.rendered || 'Untitled'}</h2>
-                    <div class="post-content">${post.content.rendered || 'No content'}</div>
-                    <div class="post-actions">
-                        <button class="edit-btn" data-id="${post.id}">Edit</button>
-                        <button class="delete-btn" data-id="${post.id}">Delete</button>
-                    </div>
-                `;
-                postGrid.appendChild(postElement);
-            });
-        }
+        // Rest of your code...
 
     } catch (error) {
-        console.error('Error:', error);
+        console.error('Full error:', error);
         document.querySelector('.post-grid').innerHTML =
-            '<p>Sorry, you are not allowed to access REST API. error_reason... With the free plan, only WordPress default endpoint can be authenticated</p>';
+            `<p>Error: ${error.message}. Check console.</p>`;
     }
 });
 
