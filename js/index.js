@@ -35,23 +35,55 @@ document.getElementById("sidebar-login-btn").addEventListener('click', () => {
     return false
 
 });
-document.getElementById("sidebar-create-post-btn").addEventListener('click', () => {
+// REMOVE the old JWT token and fetch code entirely
+// Add this clean version:
 
-    window.location.href = "pages/createPost.html";
-    return false
+document.addEventListener("DOMContentLoaded", async () => {
 
+    try {
+        const response = await fetch("https://blog-app.infinityfree.me/?rest_route=/wp/v2/posts");
+
+        if (!response.ok) {
+            throw new Error(`Failed to load posts: ${response.status}`);
+        }
+
+        const posts = await response.json();
+        const postGrid = document.querySelector('.post-grid');
+
+        if (posts.length === 0) {
+            postGrid.innerHTML = '<p>No posts yet. <a href="pages/createPost.html">Create first post</a></p>';
+        } else {
+            posts.forEach(post => {
+                const postElement = document.createElement('div');
+                postElement.className = 'post-card';
+                postElement.innerHTML = `
+                    <h2>${post.title.rendered || 'Untitled'}</h2>
+                    <div class="post-content">${post.content.rendered || 'No content'}</div>
+                    <div class="post-actions">
+                        <button class="edit-btn" data-id="${post.id}">Edit</button>
+                        <button class="delete-btn" data-id="${post.id}">Delete</button>
+                    </div>
+                `;
+                postGrid.appendChild(postElement);
+            });
+        }
+
+    } catch (error) {
+        console.error('Error:', error);
+        document.querySelector('.post-grid').innerHTML =
+            '<p>Could not load posts. Please check connection.</p>';
+    }
 });
+
 document.getElementById("sidebar-home-btn").addEventListener('click', () => {
     window.location.href = "/";
     return false
 });
-const jwt_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsIm5hbWUiOiJyb290IiwiaWF0IjoxNzY4OTIwMTE1LCJleHAiOjE5MjY2MDAxMTV9.OoUMjCceIX9r1lIZfqfK4bvpZoTZkv0aaXRji-37jGI";
 document.addEventListener("DOMContentLoaded", async () => {
+
     await fetch("https://blog-app.infinityfree.me/?rest_route=/wp/v2/posts", {
         method: "GET",
-        mode: "cors",
         headers: {
-            "Authorization": `Bearer ${jwt_token}`,
             "content-type": "application/json",
         }
     }).then(async (response) => {
