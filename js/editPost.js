@@ -1,6 +1,4 @@
 
-
-
 function onDeviceReady() {
     // Cordova is now initialized. Have fun!
     console.log('Running cordova-' + cordova.platformId + '@' + cordova.version);
@@ -9,15 +7,18 @@ function onDeviceReady() {
 
 
 const urlParams = new URLSearchParams(window.location.search);
+const PROXY = "https://api.allorigins.win/raw?url=";
+const WORDPRESS_BASE = "http://awoplatfrm-blog-app.atwebpages.com/wp-json/wp/v2";
+
 document.addEventListener("DOMContentLoaded", async () => {
     const postId = urlParams.get('id');
     // console.log("postID", postId)
-
-    const response = await fetch(`https://blog-app.infinityfree.me/?rest_route=/wp/v2/posts/${postId}`, {
+    const response = await fetch(`${PROXY}${encodeURIComponent(WORDPRESS_BASE + '/posts/' + postId)}`, {
+        method: "GET",
         headers: {
-            "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsIm5hbWUiOiJyb290IiwiaWF0IjoxNzY4OTIwMTE1LCJleHAiOjE5MjY2MDAxMTV9.OoUMjCceIX9r1lIZfqfK4bvpZoTZkv0aaXRji-37jGI",
-        },
-        mode: "cors",
+            "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vYXdvcGxhdGZybS1ibG9nLWFwcC5hdHdlYnBhZ2VzLmNvbSIsImlhdCI6MTc2OTU1Mzk5MiwibmJmIjoxNzY5NTUzOTkyLCJleHAiOjE3NzAxNTg3OTIsImRhdGEiOnsidXNlciI6eyJpZCI6IjEifX19.AOzRgxWvopIigm4wUOgNOa-IWh9ndDMSzcpe6PzT3CE",
+            "Content-Type": "application/json",
+        }
     });
     // console.log("res", response)
 
@@ -30,28 +31,38 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
 const editPost = async (e) => {
-    console.log("edit button working ... ")
     e.preventDefault();
-    const urlParams = new URLSearchParams(window.location.search);
-    const postId = urlParams.get('id');
-    console.log("id", postId)
-    const title = document.getElementById('title').value;
-    const content = document.getElementById('content').value;
 
-    await fetch(`http://127.0.0.1/myproject2/wp-json/wp/v2/posts/${postId}`, {
-        method: 'POST',
-        headers: {
-            "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsIm5hbWUiOiJyb290IiwiaWF0IjoxNzY4OTIwMTE1LCJleHAiOjE5MjY2MDAxMTV9.OoUMjCceIX9r1lIZfqfK4bvpZoTZkv0aaXRji-37jGI",
-            "content-type": "application/json",
-        },
-        body: JSON.stringify({
-            title,
-            content,
-        }),
-    });
+    try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const postId = urlParams.get('id');
+        const title = document.getElementById('title').value;
+        const content = document.getElementById('content').value;
 
-    alert('Post updated');
-    window.location.href = '../index.html';
+        const response = await fetch(`${PROXY}${encodeURIComponent(WORDPRESS_BASE + '/posts/' + postId)}`, {
+            method: 'PUT',
+            headers: {
+                "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vYXdvcGxhdGZybS1ibG9nLWFwcC5hdHdlYnBhZ2VzLmNvbSIsImlhdCI6MTc2OTU1Mzk5MiwibmJmIjoxNzY5NTUzOTkyLCJleHAiOjE3NzAxNTg3OTIsImRhdGEiOnsidXNlciI6eyJpZCI6IjEifX19.AOzRgxWvopIigm4wUOgNOa-IWh9ndDMSzcpe6PzT3CE",
+                "content-type": "application/json",
+            },
+            body: JSON.stringify({
+                title: title,
+                content: content,
+            }),
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || 'Update failed');
+        }
+
+        alert('Post updated successfully');
+        window.location.href = '../index.html';
+
+    } catch (error) {
+        console.error('Edit error:', error);
+        alert('Failed to update: ' + error.message);
+    }
 };
 
 document.getElementById('editPost').addEventListener("click", editPost)

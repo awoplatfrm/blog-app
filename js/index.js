@@ -90,9 +90,10 @@ document.addEventListener('click', (e) => {
     if (e.target.classList.contains('delete-btn')) {
         const postId = e.target.dataset.id;
         if (confirm('do you want to delete this post?')) {
-            fetch(`${WORDPRESS_API}/${postId}`, {
+            fetch(`${PROXY}${encodeURIComponent(WORDPRESS_BASE + `/posts/${postId}`)}`, {
                 method: 'DELETE',
                 headers: {
+                    "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vYXdvcGxhdGZybS1ibG9nLWFwcC5hdHdlYnBhZ2VzLmNvbSIsImlhdCI6MTc2OTU1Mzk5MiwibmJmIjoxNzY5NTUzOTkyLCJleHAiOjE3NzAxNTg3OTIsImRhdGEiOnsidXNlciI6eyJpZCI6IjEifX19.AOzRgxWvopIigm4wUOgNOa-IWh9ndDMSzcpe6PzT3CE",
                     "content-type": "application/json",
                 }
             }).then(response => {

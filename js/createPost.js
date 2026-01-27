@@ -1,4 +1,6 @@
+
 const postData = async () => {
+
 
     const title = document.getElementById("title").value.trim();
     const content = document.getElementById("content").value.trim();
@@ -17,16 +19,18 @@ const postData = async () => {
     }
 
     try {
+        const PROXY = "https://api.allorigins.win/raw?url=";
+        const WORDPRESS_BASE = "http://awoplatfrm-blog-app.atwebpages.com/wp-json/wp/v2";
 
         const button = document.getElementById("createPost");
         button.disabled = true;
         button.textContent = "Creating...";
 
-        const response = await fetch("https://blog-app.infinityfree.me/?rest_route=/wp/v2/posts", {
+        const response = await fetch(`${PROXY}${encodeURIComponent(WORDPRESS_BASE + '/posts')}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsIm5hbWUiOiJyb290IiwiaWF0IjoxNzY4OTIwMTE1LCJleHAiOjE5MjY2MDAxMTV9.OoUMjCceIX9r1lIZfqfK4bvpZoTZkv0aaXRji-37jGI"
+                "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vYXdvcGxhdGZybS1ibG9nLWFwcC5hdHdlYnBhZ2VzLmNvbSIsImlhdCI6MTc2OTU1Mzk5MiwibmJmIjoxNzY5NTUzOTkyLCJleHAiOjE3NzAxNTg3OTIsImRhdGEiOnsidXNlciI6eyJpZCI6IjEifX19.AOzRgxWvopIigm4wUOgNOa-IWh9ndDMSzcpe6PzT3CE"
             },
             body: JSON.stringify(post_data)
         });
