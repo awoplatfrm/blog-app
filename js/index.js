@@ -36,39 +36,42 @@ document.getElementById("sidebar-login-btn").addEventListener('click', () => {
 
 });
 
-const WORDPRESS_API = "https://blog-app.infinityfree.me/index.php/wp-json/wp/v2";
+const WORDPRESS_API = "https://awoplatfrm-blog-app.atwebpages.com/wp-json/wp/v2";
+;
 document.addEventListener("DOMContentLoaded", async () => {
 
     const postGrid = document.querySelector('.post-grid');
     try {
-        console.log("Fetching from:", `${WORDPRESS_API}/posts`);
-
         const response = await fetch(`${WORDPRESS_API}/posts`);
 
-        console.log("Response status:", response.status);
-        console.log("Response headers:", Object.fromEntries(response.headers.entries()));
-
-        // Check if we got HTML instead of JSON
-        const contentType = response.headers.get('content-type') || '';
-        if (contentType.includes('text/html')) {
-            const html = await response.text();
-            console.error("Got HTML error page:", html.substring(0, 500));
-            throw new Error("WordPress returned HTML instead of JSON");
-        }
-
         if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            throw new Error(`Failed to load posts: ${response.status}`);
         }
 
         const posts = await response.json();
-        console.log("Posts received:", posts.length, "posts");
 
-        // Rest of your code...
+        if (posts.length === 0) {
+            postGrid.innerHTML = '<p>No posts yet. <a href="pages/createPost.html">Create first post</a></p>';
+        } else {
+            posts.forEach(post => {
+                const postElement = document.createElement('div');
+                postElement.className = 'post-card';
+                postElement.innerHTML = `
+                    <h2>${post.title.rendered || 'Untitled'}</h2>
+                    <div class="post-content">${post.content.rendered || 'No content'}</div>
+                    <div class="post-actions">
+                        <button class="edit-btn" data-id="${post.id}">Edit</button>
+                        <button class="delete-btn" data-id="${post.id}">Delete</button>
+                    </div>
+                `;
+                postGrid.appendChild(postElement);
+            });
+        }
 
     } catch (error) {
-        console.error('Full error:', error);
+        console.error('Error:', error);
         document.querySelector('.post-grid').innerHTML =
-            `<p>Error: ${error.message}. Check console.</p>`;
+            '<p>could not fetch posts</p>';
     }
 });
 
