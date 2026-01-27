@@ -35,14 +35,14 @@ document.getElementById("sidebar-login-btn").addEventListener('click', () => {
     return false
 
 });
-
-const WORDPRESS_API = "https://awoplatfrm-blog-app.atwebpages.com/wp-json/wp/v2";
-;
+// Add CORS proxy prefix
+const PROXY = "https://api.allorigins.win/raw?url=";
+const WORDPRESS_BASE = "http://awoplatfrm-blog-app.atwebpages.com/wp-json/wp/v2";
 document.addEventListener("DOMContentLoaded", async () => {
 
     const postGrid = document.querySelector('.post-grid');
     try {
-        const response = await fetch(`${WORDPRESS_API}/posts`);
+        const response = await fetch(`${PROXY}${encodeURIComponent(WORDPRESS_BASE + '/posts')}`);
 
         if (!response.ok) {
             throw new Error(`Failed to load posts: ${response.status}`);
