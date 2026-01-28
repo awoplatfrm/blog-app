@@ -37,7 +37,8 @@ document.getElementById("sidebar-login-btn").addEventListener('click', () => {
 
 });
 // Add CORS proxy prefix
-const PROXY = "https://api.allorigins.win/raw?url=";
+// const PROXY = "https://api.allorigins.win/raw?url=";
+const PROXY = "https://corsproxy.io/?";
 const WORDPRESS_BASE = "http://awoplatfrm-blog-app.atwebpages.com/wp-json/wp/v2";
 document.addEventListener("DOMContentLoaded", async () => {
 
