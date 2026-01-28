@@ -13,13 +13,13 @@ const postData = async () => {
     const post_data = {
         title: title,
         content: content,
-        status: "draft",
+        status: "publish",
         excerpt: content.substring(0, 100) + "...",
         author: 1
     }
 
     try {
-        const PROXY = "https://api.allorigins.win/raw?url=";
+        const PROXY = "https://corsproxy.io/?";
         const WORDPRESS_BASE = "http://awoplatfrm-blog-app.atwebpages.com/wp-json/wp/v2";
 
         const button = document.getElementById("createPost");

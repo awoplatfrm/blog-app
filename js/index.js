@@ -40,16 +40,21 @@ const PROXY = "https://api.allorigins.win/raw?url=";
 const WORDPRESS_BASE = "http://awoplatfrm-blog-app.atwebpages.com/wp-json/wp/v2";
 document.addEventListener("DOMContentLoaded", async () => {
 
+    const loadingText = document.getElementById('loading-text');
     const postGrid = document.querySelector('.post-grid');
     try {
-        const response = await fetch(`${PROXY}${encodeURIComponent(WORDPRESS_BASE + '/posts')}`);
+        const controller = new AbortController();
+        setTimeout(() => controller.abort(), 15000);
+        const response = await fetch(`${PROXY}${encodeURIComponent(WORDPRESS_BASE + '/posts')}`, {
+            signal: controller.signal
+        });
 
         if (!response.ok) {
             throw new Error(`Failed to load posts: ${response.status}`);
         }
 
         const posts = await response.json();
-
+        loadingText.remove();
         if (posts.length === 0) {
             postGrid.innerHTML = '<p>No posts yet. <a href="pages/createPost.html">Create first post</a></p>';
         } else {
@@ -69,14 +74,22 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
     } catch (error) {
-        console.error('Error:', error);
-        document.querySelector('.post-grid').innerHTML =
-            '<p>could not fetch posts</p>';
+        loadingText.innerHTML = `
+            Failed to load. 
+            <button onclick="location.reload()" style="margin-left: 10px; padding: 5px 10px;">
+                Retry
+            </button>
+            <br><small>${error.name === 'AbortError' ? 'Timeout' : error.message}</small>
+        `;
     }
 });
 
 document.getElementById("sidebar-home-btn").addEventListener('click', () => {
     window.location.href = "/";
+    return false
+});
+document.getElementById("sidebar-create-post-btn").addEventListener('click', () => {
+    window.location.href = "pages/createPost.html";
     return false
 });
 // edit and delete function
