@@ -29,6 +29,7 @@ document.getElementById("login-btn").addEventListener("click", () => {
     return false;
 
 })
+
 document.getElementById("sidebar-login-btn").addEventListener('click', () => {
     console.log("login button clicked")
     window.location.href = "pages/loginPage.html";
