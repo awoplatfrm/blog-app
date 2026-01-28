@@ -86,10 +86,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 });
 
-document.getElementById("sidebar-home-btn").addEventListener('click', () => {
-    window.location.href = "/";
-    return false
-});
+// document.getElementById("sidebar-home-btn").addEventListener('click', () => {
+//     window.location.href = "/";
+//     return false
+// });
 document.getElementById("sidebar-create-post-btn").addEventListener('click', () => {
     window.location.href = "pages/createPost.html";
     return false
