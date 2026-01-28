@@ -42,6 +42,7 @@ const postData = async () => {
 
         const response_data = await response.json();
         console.log("Post created successfully", response_data);
+        window.location.href = '../index.html';
 
 
         document.getElementById("title").value = "";

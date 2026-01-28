@@ -47,7 +47,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     try {
         const controller = new AbortController();
         setTimeout(() => controller.abort(), 15000);
-        const response = await fetch(`${PROXY}${encodeURIComponent(WORDPRESS_BASE + '/posts')}`, {
+        const cacheBuster = Date.now();
+        const response = await fetch(`${PROXY}${encodeURIComponent(WORDPRESS_BASE + '/posts?t=' + cacheBuster)}`, {
             signal: controller.signal
         });
 
@@ -56,6 +57,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         const posts = await response.json();
+        console.log("Posts loaded:", posts);
         loadingText.remove();
         if (posts.length === 0) {
             postGrid.innerHTML = '<p>No posts yet. <a href="pages/createPost.html">Create first post</a></p>';
@@ -64,7 +66,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const postElement = document.createElement('div');
                 postElement.className = 'post-card';
                 postElement.innerHTML = `
-                    <h2>${post.title.rendered || 'Untitled'}</h2>
+       ${post.title.rendered || 'Untitled'}
                     <div class="post-content">${post.content.rendered || 'No content'}</div>
                     <div class="post-actions">
                         <button class="edit-btn" data-id="${post.id}">Edit</button>
@@ -78,11 +80,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     } catch (error) {
         loadingText.innerHTML = `
             Failed to load. 
-            <button onclick="location.reload()" style="margin-left: 10px; padding: 5px 10px;">
-                Retry
-            </button>
+            < button onclick = "location.reload()" style = "margin-left: 10px; padding: 5px 10px;" >
+        Retry
+            </button >
             <br><small>${error.name === 'AbortError' ? 'Timeout' : error.message}</small>
-        `;
+                `;
     }
 });
 
@@ -114,7 +116,7 @@ document.addEventListener('click', (e) => {
             }).then(response => {
                 if (response.ok) {
                     alert('Post deleted');
-                    location.reload();
+                    location.reload(true);
                 } else {
                     throw new Error('Failed to delete post');
                 }
