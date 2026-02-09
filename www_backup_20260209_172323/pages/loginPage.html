@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src * 'self' 'unsafe-inline' 'unsafe-eval' data: gap:;
+        script-src * 'self' 'unsafe-inline' 'unsafe-eval' data: gap:;
+        connect-src * 'self' 'unsafe-inline' data: gap:;
+        style-src * 'self' 'unsafe-inline' data: gap:;
+        img-src * 'self' 'unsafe-inline' data: gap:;
+        font-src * 'self' 'unsafe-inline' data: gap:;
+        media-src * 'self' data: gap:;
+        frame-src * 'self' data: gap:;
+    ">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+    <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
+    <meta name="color-scheme" content="light dark">
+    <link rel="stylesheet" href="../css/loginPage.css">
+    <title>Login</title>
+
+</head>
+
+<body>
+    <div class="container">
+        <nav class="navbar">
+            <div class="nav-brand">MyBlog</div>
+            <ul class="nav-links">
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="#" id="home-btn">Home</a></li>
+            </ul>
+        </nav>
+
+        <div class="form-container">
+            <h2>Login To Your Account</h2>
+            <form id="login-form">
+                <input type="email" id="email" placeholder="Email" required>
+                <input type="password" id="password" placeholder="Password" required>
+                <button type="submit">Login</button>
+                <p>Don't have an account? <a href="#" id="signup-btn">Create one</a></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Load Cordova first, then your script -->
+    <script src="../cordova.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <!-- <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-analytics-compat.js"></script> -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="../js/loginPage.js"></script>
+</body>
+
+</html>
