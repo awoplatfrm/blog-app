@@ -9,23 +9,24 @@ module.exports = async (req, res) => {
     }
 
     // Remove /api/proxy from the URL
-    // /api/proxy/wp/v2/posts → /wp/v2/posts
     const wpPath = req.url.replace(/^\/api\/proxy/, '');
-
     const wpUrl = `http://awoplatfrm-blog-app.atwebpages.com/wp-json${wpPath}`;
 
     console.log('Proxy:', req.url, '→', wpUrl);
+    console.log('Auth Header:', req.headers.authorization ? 'Present' : 'Missing');
 
     try {
         const response = await fetch(wpUrl, {
             method: req.method,
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': req.headers.authorization || '' // CRITICAL: Forward auth header
             },
             body: req.method !== 'GET' ? JSON.stringify(req.body) : undefined
         });
 
         const data = await response.json();
+        console.log('Response Status:', response.status);
         res.status(response.status).json(data);
     } catch (error) {
         res.status(500).json({ error: error.message });

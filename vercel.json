@@ -1,12 +1,13 @@
 {
-    "rewrites": [
-        {
-            "source": "/api/proxy/(.*)",
-            "destination": "/api/proxy"
-        },
-        {
-            "source": "/(.*)",
-            "destination": "/www/$1"
-        }
-    ]
+  "rewrites": [
+    {
+      "source": "/api/proxy/:path*",
+      "destination": "/api/proxy",
+      "headers": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization"
+      }
+    }
+  ]
 }
