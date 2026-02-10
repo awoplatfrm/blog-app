@@ -90,7 +90,7 @@ const editPost = async (e) => {
         const response = await fetch(`${base_url}/posts/${postId}`, {
             method: 'PUT',
             headers: {
-                "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vYXdvcGxhdGZybS1ibG9nLWFwcC5hdHdlYnBhZ2VzLmNvbSIsImlhdCI6MTc3MDYwMTMxNiwibmJmIjoxNzcwNjAxMzE2LCJleHAiOjE3NzEyMDYxMTYsImRhdGEiOnsidXNlciI6eyJpZCI6IjEifX19.cP4u5JvkBY_dmG2XgCjtU8klrW43OTQmi7JKqTMUVjE",
+                "Authorization": "Bearer " + localStorage.getItem("wp_token"),
                 "content-type": "application/json",
             },
             body: JSON.stringify({

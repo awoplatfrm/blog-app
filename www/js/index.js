@@ -120,7 +120,7 @@ document.addEventListener('click', (e) => {
                 method: 'DELETE',
                 headers: {
                     // 🚨 REMOVE HARDCODED TOKEN - Use localStorage
-                    "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vYXdvcGxhdGZybS1ibG9nLWFwcC5hdHdlYnBhZ2VzLmNvbSIsImlhdCI6MTc3MDYwMTMxNiwibmJmIjoxNzcwNjAxMzE2LCJleHAiOjE3NzEyMDYxMTYsImRhdGEiOnsidXNlciI6eyJpZCI6IjEifX19.cP4u5JvkBY_dmG2XgCjtU8klrW43OTQmi7JKqTMUVjE",
+                    "Authorization": "Bearer " + localStorage.get("wp_token"),
                     "Content-Type": "application/json",
                 }
             }).then(response => {
