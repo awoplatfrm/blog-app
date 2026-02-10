@@ -1,5 +1,4 @@
 document.addEventListener('deviceready', onDeviceReady, false);
-
 function onDeviceReady() {
     console.log('Running cordova-' + cordova.platformId + '@' + cordova.version);
 }
@@ -24,8 +23,31 @@ document.getElementById("sidebar-login-btn").addEventListener('click', () => {
     return false
 });
 
-// 🎯 REMOVE ALL PROXY LINES - Use direct /api/proxy/
-// NO NEED FOR PROXY OR WORDPRESS_BASE VARIABLES
+
+// SMART API BASE SELECTOR
+function getApiBase() {
+    const hostname = window.location.hostname;
+
+    // If on Vercel
+    if (hostname.includes('vercel.app')) {
+        return '/api/proxy/wp/v2';  // Use Vercel proxy
+    }
+
+    // If on GitHub Pages
+    if (hostname.includes('github.io')) {
+        return 'http://awoplatfrm-blog-app.atwebpages.com/wp-json/wp/v2';  // Direct (allowed)
+    }
+
+    // Local development (Cordova/localhost) - USE PROXY
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+        // Use CORS proxy for local testing
+        return 'https://corsproxy.io/?http://awoplatfrm-blog-app.atwebpages.com/wp-json/wp/v2';
+    }
+
+    // Default: Use Vercel-style proxy
+    return '/api/proxy/wp/v2';
+}
+
 
 document.addEventListener("DOMContentLoaded", async () => {
     const loadingText = document.getElementById('loading-text');
@@ -35,9 +57,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         const controller = new AbortController();
         setTimeout(() => controller.abort(), 15000);
         const cacheBuster = Date.now();
-
+        const API_BASE = getApiBase();
         // 🎯 CORRECTED: Use direct /api/proxy/ without PROXY variable
-        const response = await fetch(`/api/proxy/posts?t=${cacheBuster}`, {
+        const response = await fetch(`${API_BASE}/posts?t=${cacheBuster}`, {
             signal: controller.signal
         });
 
@@ -93,8 +115,8 @@ document.addEventListener('click', (e) => {
     if (e.target.classList.contains('delete-btn')) {
         const postId = e.target.dataset.id;
         if (confirm('Do you want to delete this post?')) {
-            // 🎯 CORRECTED: Use direct /api/proxy/ without PROXY variable
-            fetch(`/api/proxy/posts/${postId}`, {
+            const API_BASE = getApiBase();
+            fetch(`${API_BASE}/posts/${postId}`, {
                 method: 'DELETE',
                 headers: {
                     // 🚨 REMOVE HARDCODED TOKEN - Use localStorage

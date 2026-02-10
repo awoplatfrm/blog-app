@@ -1,4 +1,32 @@
+document.addEventListener('deviceready', onDeviceReady, false);
 
+function onDeviceReady() {
+    console.log('Running cordova-' + cordova.platformId + '@' + cordova.version);
+}
+
+// SMART API BASE SELECTOR
+function getApiBase() {
+    const hostname = window.location.hostname;
+
+    // If on Vercel
+    if (hostname.includes('vercel.app')) {
+        return '/api/proxy/wp/v2';  // Use Vercel proxy
+    }
+
+    // If on GitHub Pages
+    if (hostname.includes('github.io')) {
+        return 'http://awoplatfrm-blog-app.atwebpages.com/wp-json/wp/v2';  // Direct (allowed)
+    }
+
+    // Local development (Cordova/localhost) - USE PROXY
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+        // Use CORS proxy for local testing
+        return 'https://corsproxy.io/?http://awoplatfrm-blog-app.atwebpages.com/wp-json/wp/v2';
+    }
+
+    // Default: Use Vercel-style proxy
+    return '/api/proxy/wp/v2';
+}
 const postData = async () => {
 
     const title = document.getElementById("title").value.trim();
@@ -20,12 +48,13 @@ const postData = async () => {
     try {
         const PROXY = "https://corsproxy.io/?";
         const WORDPRESS_BASE = "http:///api/proxy/wp/v2";
+        const base_url = getApiBase();
 
         const button = document.getElementById("createPost");
         button.disabled = true;
         button.textContent = "Creating...";
 
-        const response = await fetch(`${PROXY}${encodeURIComponent(WORDPRESS_BASE + '/posts')}`, {
+        const response = await fetch(`${base_url}/posts`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

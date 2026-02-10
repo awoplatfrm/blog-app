@@ -1,25 +1,22 @@
 module.exports = async (req, res) => {
-    // Allow CORS
+    // ALLOW ALL ORIGINS
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
-    // Handle preflight
     if (req.method === 'OPTIONS') {
         return res.status(200).end();
     }
 
-    // Your WordPress URL
     const wpUrl = `http://awoplatfrm-blog-app.atwebpages.com/wp-json/wp/v2${req.url}`;
 
     try {
         const response = await fetch(wpUrl, {
             method: req.method,
             headers: {
-                'Authorization': req.headers.authorization || '',
                 'Content-Type': 'application/json'
             },
-            body: req.method !== 'GET' && req.body ? JSON.stringify(req.body) : undefined
+            body: req.method !== 'GET' ? JSON.stringify(req.body) : undefined
         });
 
         const data = await response.json();
