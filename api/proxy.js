@@ -8,7 +8,13 @@ module.exports = async (req, res) => {
         return res.status(200).end();
     }
 
-    const wpUrl = `http://awoplatfrm-blog-app.atwebpages.com/wp-json/wp/v2${req.url}`;
+    // Remove /api/proxy from the URL
+    // /api/proxy/wp/v2/posts → /wp/v2/posts
+    const wpPath = req.url.replace(/^\/api\/proxy/, '');
+
+    const wpUrl = `http://awoplatfrm-blog-app.atwebpages.com/wp-json${wpPath}`;
+
+    console.log('Proxy:', req.url, '→', wpUrl);
 
     try {
         const response = await fetch(wpUrl, {
