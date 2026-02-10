@@ -18,6 +18,7 @@ module.exports = async (req, res) => {
     try {
         const response = await fetch(wpUrl, {
             method: req.method,
+
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': req.headers.authorization || '' // CRITICAL: Forward auth header
